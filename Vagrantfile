@@ -7,7 +7,8 @@ Vagrant.configure("2") do |config|
 
   config.cache.auto_detect = true
 
-  config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 80, host: 8000 #apache
+  config.vm.network :forwarded_port, guest: 8080, host: 8001 #tomcat
   config.vm.synced_folder "./db", "/home/vagrant/drush-backups/"
   # precise64.box doesn't have chef 11, which we require
   config.vm.provision :shell, :inline => <<-HEREDOC
@@ -18,9 +19,11 @@ Vagrant.configure("2") do |config|
     chef.json.merge!({
       "deploy-drupal" => { 
         "dev_group_name" => "vagrant",
-        "sql_load_file" => "db/dump.sql.gz",
-        "get_project_from" => { :path => "/vagrant" }
-      },  
+        "solr" => { "app_name" => "my_organization" }
+      },
+      "tomcat" => {
+        "port" => "8080"
+      },
       "mysql" => {
         "server_root_password" => "root",
         "server_debian_password" => "root",
@@ -30,7 +33,7 @@ Vagrant.configure("2") do |config|
         "recipes" => [ "deploy-drupal" ],
         "drupal_site_dir" => "/var/shared/sites/cooked.drupal/site"
       },  
-      "run_list" =>[ "deploy-drupal", "minitest-handler" ]
+      "run_list" =>[ "deploy-drupal::default" , "deploy-drupal::solr", "minitest-handler" ]
     })   
   end
 end
