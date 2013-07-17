@@ -16,7 +16,7 @@ default['deploy-drupal']['solr']['home_dir']  = node['deploy-drupal']['solr']['r
 default['deploy-drupal']['solr']['make_solr_default_search'] = "true"
 
 default['deploy-drupal']['solr']['php_client_url'] = "https://solr-php-client.googlecode.com/files/SolrPhpClient.r22.2009-11-09.tgz"
-default['deploy-drupal']['solr']['apachesolr_install_dir'] = "/sites/all/modules"
+default['deploy-drupal']['solr']['apachesolr_install_dir'] = "sites/all/modules"
 
 # directory in apachesolr module where relevant solr
 # configuration files can be found to copy to solr/home
