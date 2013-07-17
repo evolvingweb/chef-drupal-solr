@@ -50,6 +50,7 @@ directory node['deploy-drupal']['solr']['home_dir'] do
   mode 0775
   recursive true
 end
+
 bash "download-solr-#{node['deploy-drupal']['solr']['version']}" do
   user node['tomcat']['user']
   cwd node['deploy-drupal']['solr']['root_dir']
@@ -67,6 +68,7 @@ template SOLR_CONTEXT_FILE do
   group node['tomcat']['group']
   mode 0644
   source "solr_context.xml.erb"
+  notifies :restart, "service[tomcat]"
 end
 
 execute "download-apachesolr-module" do
