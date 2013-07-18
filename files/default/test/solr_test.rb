@@ -1,7 +1,7 @@
 require 'minitest/spec'
 # minitest recipe
 # Cookbook Name:: deploy-drupal
-# Spec:: solr
+# Spec:: drupal_solr
 #
 include MiniTest::Chef::Assertions
 include MiniTest::Chef::Context
