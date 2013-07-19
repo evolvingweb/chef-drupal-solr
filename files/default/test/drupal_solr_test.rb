@@ -31,7 +31,7 @@ class TestSolr < MiniTest::Chef::TestCase
     drupal_root  = node['deploy-drupal']['deploy_dir']  + "/" +
                         node['deploy-drupal']['project_name'] + "/" +
                         node['deploy-drupal']['drupal_root_dir']
-    command = "drush --root=#{drupal_root} vget search_active_modules | grep apachesolr"
+    command = "drush --root=#{drupal_root} variable-get search_active_modules | grep apachesolr"
     txt = "expected to find apachesolr in active Drupal search modules"
     assert_sh command , txt
   end
@@ -62,9 +62,9 @@ class TestSolr < MiniTest::Chef::TestCase
     system "rm -rf #{minitest_log_dir}; mkdir -p #{minitest_log_dir}"
     
     # install devel and enable devel and devel_generate if necessary 
-    system "#{drush} dl -n devel;\
-            #{drush} en -y devel devel_generate;\
-            #{drush} cc all;"
+    system "#{drush} download -n devel;\
+            #{drush} pm-enable -y devel devel_generate;\
+            #{drush} cache-clear all;"
     
     # record number of indexed documents in solr
     system "echo `#{find_num_docs}` > #{minitest_log_dir}/before"
