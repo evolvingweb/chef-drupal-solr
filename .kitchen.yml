@@ -11,15 +11,4 @@ platforms:
 suites:
 - name: default
   run_list: 
-  - recipe[deploy-drupal]
-  - recipe[minitest-handler]
-  attributes: {
-    "mysql": {
-      "server_root_password": "root",
-      "server_debian_password": "root",
-      "server_repl_password": "root"
-    },
-    "minitest": {
-      "recipes": ["deploy-drupal"]
-    }
-  }
+  - recipe[drupal-solr::default]

@@ -15,17 +15,6 @@ task :knife_test do
   Rake::Task[:destroy_sandbox].execute
 end
 
-desc "Deploys Drupal server and runs minitest"
-task :deploy_minitest do
-  Rake::Task[:prepare_sandbox].execute
-  Dir.chdir(sandbox_path) do
-    sh "berks install -p cookbooks"
-    sh "rvmsudo chef-solo -c test/solo.rb -j test/dna.json || true"
-    sh "sudo cat /tmp/vagrant-chef-1/chef-stacktrace.out"
-    sh "sudo cat /var/log/syslog"
-  end
-end
-
 task :prepare_sandbox do
   rm_rf sandbox_path
   mkdir_p sandbox_path
