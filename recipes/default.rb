@@ -30,7 +30,6 @@ execute "download-apachesolr-module" do
   command "#{DRUSH} dl apachesolr -y --destination=#{node['drupal-solr']['apachesolr_install_dir']}"
   not_if "#{DRUSH} pm-list | grep apachesolr"
   notifies :run, "execute[drush-cache-clear]"
-  notifies :run, "execute[drush-cron]"
 end
 
 bash "install-apachesolr-module" do
@@ -76,11 +75,5 @@ end
 # drush cache clear
 execute "drush-cache-clear" do
   command "#{DRUSH} cache-clear all"
-  action :nothing
-end
-
-# run cron to index content for newly created solr search server
-execute "drush-cron" do
-  command "#{DRUSH} cron"
   action :nothing
 end

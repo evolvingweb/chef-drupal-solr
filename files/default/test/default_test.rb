@@ -56,7 +56,7 @@ class TestSolr < MiniTest::Chef::TestCase
     system "rm -rf #{minitest_log_dir}; mkdir -p #{minitest_log_dir}"
     
     # install devel and enable devel and devel_generate if necessary 
-    system "#{drush} download -n devel;\
+    system "#{drush} pm-download -n devel;\
             #{drush} pm-enable -y devel devel_generate;\
             #{drush} cache-clear all;"
     
