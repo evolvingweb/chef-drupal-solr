@@ -2,19 +2,16 @@
 ## Recipe:: solr
 ##
 
-include_recipe 'deploy-drupal::install_solr'
-
-# i need: site_dir, db_name for mysql_connection
-SOLR_PHP_CLIENT_DIR     = DEPLOY_SITE_DIR + "/" +
+SOLR_PHP_CLIENT_DIR     = node['drupal-solr']['drupal_root'] + "/" +
                           node['drupal-solr']['apachesolr_install_dir'] +
                           "/apachesolr"
-DRUSH                   = "drush --root='#{DEPLOY_SITE_DIR}'"
+DRUSH                   = "drush --root='#{node['drupal-solr']['drupal_root']}'"
 
 DB_ROOT_CONNECTION      = [ "mysql",
                             "--user='root'",
                             "--host='localhost'",
                             "--password='#{node['mysql']['server_root_password']}'",
-                            "--database='#{node['deploy-drupal']['db_name']}'"
+                            "--database='#{node['drupal-solr']['drupal_db']}'"
                           ].join(' ')
 
 UPDATE_SOLR_SERVER_SQL  = [ "UPDATE apachesolr_environment",
@@ -68,7 +65,7 @@ end
 
 execute "set-solr-as-default-search" do
   command "#{DRUSH} vset search_default_module apachesolr_search"
-  only_if { node['drupal-solr']['make_solr_default_search'] == "true" }
+  only_if { node['drupal-solr']['make_solr_default_search'] }
 end
 
 # to test wether drush works:

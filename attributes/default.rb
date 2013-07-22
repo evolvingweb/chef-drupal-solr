@@ -10,7 +10,7 @@ default['drupal-solr']['url']       = "http://archive.apache.org/dist/lucene/sol
 
 default['drupal-solr']['app_name']  = "org"
 default['drupal-solr']['home_dir']  = "/opt/solr/#{node['drupal-solr']['app_name']}"
-default['drupal-solr']['make_solr_default_search'] = "true"
+default['drupal-solr']['make_solr_default_search'] = true
 
 default['drupal-solr']['php_client_url'] =
   "https://solr-php-client.googlecode.com/files/SolrPhpClient.r22.2009-11-09.tgz"
