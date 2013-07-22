@@ -4,11 +4,54 @@ driver_config:
   require_chef_omnibus: true
 
 platforms:
-- name: ubuntu-12.04
+- name: ubuntu12.04
   driver_config:
-    box: precise64
-
+    box: precise64-dev
+    url: 'https://s3.amazonaws.com/vagrant-drupal/precise64-dev.box'
+ 
 suites:
-- name: default
+- name: drupal7
   run_list: 
+  - recipe[deploy-drupal::default]
   - recipe[drupal-solr::default]
+  - recipe[minitest-handler]
+  attributes: {
+    "mysql": {
+      "server_root_password": "root",
+      "server_debian_password": "root",
+      "server_repl_password": "root"
+    },
+    "deploy-drupal": {
+      "drupal_dl_version" : "7"
+    },
+    "drupal-solr" : {
+      "drupal_version" : "7"
+    },
+    "minitest" : { 
+      "recipes" : ["deploy-drupal::default" , "drupal-solr::default"] ,
+      "drupal_site_dir" : "/var/shared/sites/cooked.drupal/site"
+    }
+  }
+- name: drupal6
+  run_list: 
+  - recipe[deploy-drupal::default]
+  - recipe[drupal-solr::default]
+  - recipe[minitest-handler]
+  attributes: {
+    "mysql": {
+      "server_root_password": "root",
+      "server_debian_password": "root",
+      "server_repl_password": "root"
+    },
+    "deploy-drupal": {
+      "drupal_dl_version" : "6"
+    },
+    "drupal-solr" : {
+      "drupal_version" : "6"
+    },
+    "minitest" : { 
+      "recipes" : ["deploy-drupal::default" , "drupal-solr::default"] ,
+      "drupal_site_dir" : "/var/shared/sites/cooked.drupal/site"
+    }
+
+  }
