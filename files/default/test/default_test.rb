@@ -28,24 +28,18 @@ class TestSolr < MiniTest::Chef::TestCase
     assert_sh command , txt
   end
   def test_drupal_solr_module
-    drupal_root  = node['deploy-drupal']['deploy_dir']  + "/" +
-                        node['deploy-drupal']['project_name'] + "/" +
-                        node['deploy-drupal']['drupal_root_dir']
-    command = "drush --root=#{drupal_root} variable-get search_active_modules | grep apachesolr"
+    command = "drush --root=#{node['drupal-solr']['drupal_root']} variable-get search_active_modules | grep apachesolr"
     txt = "expected to find apachesolr in active Drupal search modules"
     assert_sh command , txt
   end
   def test_drupal_solr_indexing 
     # number of automatically generated nodes for testing
-    n = 14
+    n = 2
     # assemble all necessary paths and urls
-    drupal_root       = node['deploy-drupal']['deploy_dir']  + "/" +
-                        node['deploy-drupal']['project_name'] + "/" +
-                        node['deploy-drupal']['drupal_root_dir']
-    mysql_root        = "mysql -u root -p#{node['mysql']['server_root_password']} " +
-                        "--database=#{node['deploy-drupal']['db_name']}"
+    mysql_root        = "mysql -u root -p#{node['drupal-solr']['mysql_root_pass']} " +
+                        "--database=#{node['drupal-solr']['drupal_db']}"
     solr_root_url     = "http://localhost:#{node['tomcat']['port']}/" +
-                        node['deploy-drupal']['solr']['app_name']
+                        node['drupal-solr']['app_name']
     # this section is a ",' and \ mine field, watch yourself:
     # \&: since & in curl requests will confuse bash as background process indicator
     solr_commit_req   = solr_root_url + 
@@ -57,7 +51,7 @@ class TestSolr < MiniTest::Chef::TestCase
     find_num_docs     = "curl #{solr_luke_req} " +
                         '| sed \'s/^.*\"numDocs\":\([0-9]\{1,\}\).*$/\1/\''
     minitest_log_dir  = "/tmp/minitest/solr"
-    drush             = "cd #{drupal_root}; drush"
+    drush             = "drush --root=#{node['drupal-solr']['drupal_root']}"
     
     system "rm -rf #{minitest_log_dir}; mkdir -p #{minitest_log_dir}"
     

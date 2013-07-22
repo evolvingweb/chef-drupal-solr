@@ -11,15 +11,6 @@ SOLR_CONTEXT_FILE       = node['tomcat']['context_dir'] + "/" +
 SOLR_ARCHIVE            = "apache-solr-" + node['drupal-solr']['version']
 
 
-# directory containing solr.war file
-# if war file is removed tomcat undeploys application
-directory node['drupal-solr']['root_dir'] do
-  owner node['tomcat']['user']
-  group node['tomcat']['group']
-  mode 0775
-  recursive true
-end
-
 # solr/home directory
 directory node['drupal-solr']['home_dir'] do
   owner node['tomcat']['user']
