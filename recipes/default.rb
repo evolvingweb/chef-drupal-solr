@@ -5,9 +5,6 @@
 include_recipe "drupal-solr::install_solr"
 include_recipe "drush"
 
-SOLR_PHP_CLIENT_DIR     = node['drupal-solr']['drupal_root'] + "/" +
-                          node['drupal-solr']['apachesolr_install_dir'] +
-                          "/apachesolr"
 DRUSH                   = "drush --root='#{node['drupal-solr']['drupal_root']}'"
 
 DB_ROOT_CONNECTION      = [ "mysql",
@@ -27,31 +24,29 @@ DRUPAL_SOLR_CONF_DIR    = node['drupal-solr']['drupal_root'] +
                           node['drupal-solr']['apachesolr_conf_dir']
 
 case node['drupal-solr']['drupal_version']
-when /^7.*/
+when /^7/
   apachesolr = "apachesolr-7.x-1.x"
-when /^6.*/
+when /^6/
   apachesolr = "apachesolr-6.x-1.x"
 end
 
 case node['drupal-solr']['drupal_version']
-when /^7.*/
+when /^7/
   apachesolr_modules = %w{"apachesolr","apachesolr_search", "apachesolr_access"}
-when /^6.*/
+when /^6/
   apachesolr_modules = %w{"apachesolr","apachesolr_search", "apachesolr_nodeaccess" }
 end
 Chef::Log.info apachesolr + "***" + apachesolr_modules.join(' ')
-execute "download-apachesolr-module" do
-  command "#{DRUSH} pm-download #{apachesolr} -y --destination=#{node['drupal-solr']['apachesolr_install_dir']}/.."
-  not_if "#{DRUSH} pm-list | grep apachesolr"
-  notifies :run, "execute[drush-cache-clear]", :immediately
-end
 
-bash "install-apachesolr-module" do
-  cwd node['drupal-solr']['apachesolr_install_dir']
+bash "download-apachesolr-module" do
   code <<-EOH
-    curl #{node['drupal-solr']['php_client_url']} | tar xz
+    #{DRUSH} pm-download #{apachesolr} -y --destination=#{node['drupal-solr']['apachesolr_install_dir']}/..
+    cd #{node['drupal-solr']['apachesolr_install_dir']}
+    find . ! -type d -name "SolrPhpClient" && curl #{node['drupal-solr']['php_client_url']} | tar xz
     #{DRUSH} pm-enable -y #{apachesolr_modules.join(' ')}
   EOH
+  not_if "#{DRUSH} pm-list | grep apachesolr"
+  notifies :run, "execute[drush-cache-clear]", :immediately
 end
 
 bash "drupalize-solr-conf-files" do
