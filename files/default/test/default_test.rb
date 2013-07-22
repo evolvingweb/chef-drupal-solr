@@ -28,9 +28,22 @@ class TestSolr < MiniTest::Chef::TestCase
     assert_sh command , txt
   end
   def test_drupal_solr_module
-    command = "drush --root=#{node['drupal-solr']['drupal_root']} variable-get search_active_modules | grep apachesolr"
+    # only for Drupal 7
+    if node['drupal-solr']['drupal_version'] =~ /^7/ 
+      command = "drush --root=#{node['drupal-solr']['drupal_root']} variable-get search_active_modules | grep apachesolr"
+    else
+      command = "exit 0"
+    end
     txt = "expected to find apachesolr in active Drupal search modules"
     assert_sh command , txt
+  end
+  def test_solr_is_default_search
+    if node['drupal-solr']['make_solr_default_search']
+      command = "drush --root=#{node['drupal-solr']['drupal_root']} variable-get search_default_module | grep apachesolr"
+    else
+      command = "drush --root=#{node['drupal-solr']['drupal_root']} variable-get search_default_module | grep -v apachesolr"
+    end
+    assert_sh command , "expected Drupal to have its default search module set appropriately"
   end
   def test_drupal_solr_indexing 
     # number of automatically generated nodes for testing

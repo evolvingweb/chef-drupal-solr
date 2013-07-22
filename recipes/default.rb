@@ -26,19 +26,32 @@ UPDATE_SOLR_SERVER_SQL  = [ "UPDATE apachesolr_environment",
 DRUPAL_SOLR_CONF_DIR    = node['drupal-solr']['drupal_root'] +
                           node['drupal-solr']['apachesolr_conf_dir']
 
+case node['drupal-solr']['drupal_version']
+when /^7.*/
+  apachesolr = "apachesolr-7.x-1.x"
+when /^6.*/
+  apachesolr = "apachesolr-6.x-1.x"
+end
+
+case node['drupal-solr']['drupal_version']
+when /^7.*/
+  apachesolr_modules = %w{"apachesolr","apachesolr_search", "apachesolr_access"}
+when /^6.*/
+  apachesolr_modules = %w{"apachesolr","apachesolr_search", "apachesolr_nodeaccess" }
+end
+Chef::Log.info apachesolr + "***" + apachesolr_modules.join(' ')
 execute "download-apachesolr-module" do
-  command "#{DRUSH} dl apachesolr -y --destination=#{node['drupal-solr']['apachesolr_install_dir']}"
+  command "#{DRUSH} pm-download #{apachesolr} -y --destination=#{node['drupal-solr']['apachesolr_install_dir']}/.."
   not_if "#{DRUSH} pm-list | grep apachesolr"
-  notifies :run, "execute[drush-cache-clear]"
+  notifies :run, "execute[drush-cache-clear]", :immediately
 end
 
 bash "install-apachesolr-module" do
-  cwd node['drupal-solr']['drupal_root'] + "/" + node['drupal-solr']['apachesolr_install_dir']
+  cwd node['drupal-solr']['apachesolr_install_dir']
   code <<-EOH
     curl #{node['drupal-solr']['php_client_url']} | tar xz
-    #{DRUSH} en apachesolr apachesolr_search apachesolr_access -y
+    #{DRUSH} pm-enable -y #{apachesolr_modules.join(' ')}
   EOH
-  notifies :run, "bash[drupalize-solr-conf-files]", :immediately
 end
 
 bash "drupalize-solr-conf-files" do
@@ -47,20 +60,26 @@ bash "drupalize-solr-conf-files" do
     solr_config_files=( "protwords.txt" "schema.xml" "solrconfig.xml" )
     for file in "${solr_config_files[@]}"; do
       cp conf/$file conf/$file.bak ;
-      cp #{node['drupal-solr']['drupal_root']}/#{node['drupal-solr']['apachesolr_conf_dir']}/$file conf/$file ;
+      cp #{node['drupal-solr']['apachesolr_conf_dir']}/$file conf/$file ;
       chown -R #{node['tomcat']['user']}:#{node['tomcat']['group']} .
     done
   EOH
-  action :nothing
-  notifies :run, "execute[connect-drupal-solr]", :immediately
 end
 
-# update the apachesolr_environment table to contain
-# url of the installed solr server
-execute "connect-drupal-solr" do
-  command "#{DB_ROOT_CONNECTION} -e \"#{UPDATE_SOLR_SERVER_SQL}\""
-  action :nothing
-  notifies :run, "execute[set-solr-as-default-search]", :immediately
+case node['drupal-solr']['drupal_version']
+when /^7/
+  # update the apachesolr_environment table to contain
+  # url of the installed solr server
+  execute "connect-drupal7-solr" do
+    command "#{DB_ROOT_CONNECTION} -e \"#{UPDATE_SOLR_SERVER_SQL}\""
+  end
+when /^6/
+  bash "connect-drupal6-solr" do
+    code <<-EOH
+      #{DRUSH} variable-set apachesolr_port #{node['tomcat']['port']}
+      #{DRUSH} variable-set apachesolr_path /#{node['drupal-solr']['app_name']}
+    EOH
+  end
 end
 
 execute "set-solr-as-default-search" do
