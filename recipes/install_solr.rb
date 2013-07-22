@@ -20,12 +20,12 @@ directory node['drupal-solr']['home_dir'] do
 end
 
 bash "download-solr-#{node['drupal-solr']['version']}" do
-  user node['tomcat']['user']
   cwd "#{node['drupal-solr']['home_dir']}/.."
   code <<-EOH
     curl #{node['drupal-solr']['url']} | tar xz
     cp #{SOLR_ARCHIVE}/example/webapps/solr.war .
     cp -Rf #{SOLR_ARCHIVE}/example/solr/. #{node['drupal-solr']['home_dir']}/
+    chown -R #{node['tomcat']['user']}:#{node['tomcat']['group']} #{node['drupal-solr']['home_dir']} 
   EOH
   creates node['drupal-solr']['home_dir'] + "/conf/schema.xml"
   notifies :restart, "service[tomcat]", :delayed
