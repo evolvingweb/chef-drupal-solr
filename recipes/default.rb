@@ -2,7 +2,7 @@
 ## Recipe:: install_solr
 ##
 
-include_recipe 'tomcat::default'
+%w{curl drush tomcat}.each { |recipe| include_recipe recipe }
 
 SOLR_CONTEXT_FILE       = node['tomcat']['context_dir'] + "/" +
                           node['drupal-solr']['app_name'] + ".xml"
