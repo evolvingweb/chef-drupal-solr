@@ -1,7 +1,7 @@
 require 'minitest/spec'
 # minitest recipe
-# Cookbook Name:: deploy-drupal
-# Spec:: drupal_solr
+# Cookbook Name:: drupal-solr
+# Spec:: default
 #
 include MiniTest::Chef::Assertions
 include MiniTest::Chef::Context
@@ -19,7 +19,7 @@ class TestSolr < MiniTest::Chef::TestCase
   end
   def test_solr_server
     solr_ping_request = "http://localhost:#{node['tomcat']['port']}/" +
-                        node['deploy-drupal']['solr']['app_name'] +
+                        node['drupal-solr']['app_name'] +
                         "/admin/ping"
     command = "curl -I #{solr_ping_request} | grep OK"
     txt = "requested solr server at #{solr_ping_request} with a wildcard query"

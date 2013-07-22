@@ -29,9 +29,8 @@ DRUPAL_SOLR_CONF_DIR    = node['drupal-solr']['drupal_root'] +
 execute "download-apachesolr-module" do
   command "#{DRUSH} dl apachesolr -y --destination=#{node['drupal-solr']['apachesolr_install_dir']}"
   not_if "#{DRUSH} pm-list | grep apachesolr"
-  notifies :run, "bash[install-apachesolr-module]", :immediately
-  notifies :run, "execute[drush-cache-clear]", :delayed
-  notifies :run, "execute[drush-cron]", :delayed
+  notifies :run, "execute[drush-cache-clear]"
+  notifies :run, "execute[drush-cron]"
 end
 
 bash "install-apachesolr-module" do
@@ -40,7 +39,6 @@ bash "install-apachesolr-module" do
     curl #{node['drupal-solr']['php_client_url']} | tar xz
     #{DRUSH} en apachesolr apachesolr_search apachesolr_access -y
   EOH
-  action :nothing
   notifies :run, "bash[drupalize-solr-conf-files]", :immediately
 end
 

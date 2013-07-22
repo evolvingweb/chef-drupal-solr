@@ -27,5 +27,5 @@ end
 
 private
 def sandbox_path
-   "/tmp/chef-deploy-drupal"
+   "/tmp/chef-drupal-solr"
 end

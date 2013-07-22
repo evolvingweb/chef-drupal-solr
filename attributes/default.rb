@@ -1,4 +1,4 @@
-## Cookbook Name:: deploy-drupal
+## Cookbook Name:: drupal-solr
 ## Attribute:: solr
 
 # must be one of the versions available at http://archive.apache.org/dist/lucene/solr/
