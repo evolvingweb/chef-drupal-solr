@@ -36,7 +36,6 @@ when /^7/
 when /^6/
   apachesolr_modules = %w{"apachesolr","apachesolr_search", "apachesolr_nodeaccess" }
 end
-Chef::Log.info apachesolr + "***" + apachesolr_modules.join(' ')
 
 bash "download-apachesolr-module" do
   code <<-EOH
