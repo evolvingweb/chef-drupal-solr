@@ -48,16 +48,21 @@ bash "download-apachesolr-module" do
   notifies :run, "execute[drush-cache-clear]", :immediately
 end
 
+config_files_exist = "true"
+solr_config_files = %w{"protwords.txt" "schema.xml" "solrconfig.xml"}.each do |file|
+  config_files_exist.insert 0, "test -f #{file} && "
+end
+
 bash "drupalize-solr-conf-files" do
   cwd node['drupal-solr']['home_dir']
   code <<-EOH
-    solr_config_files=( "protwords.txt" "schema.xml" "solrconfig.xml" )
-    for file in "${solr_config_files[@]}"; do
-      cp conf/$file conf/$file.bak ;
-      cp #{node['drupal-solr']['apachesolr_conf_dir']}/$file conf/$file ;
-      chown -R #{node['tomcat']['user']}:#{node['tomcat']['group']} .
+    files=( #{solr_config_files.join(' ')} )
+    for file in "${files[@]}"; do
+      cp #{node['drupal-solr']['conf_source']}/$file conf/$file ;
     done
+    chown -R #{node['tomcat']['user']}:#{node['tomcat']['group']} .
   EOH
+  not_if config_files_exist 
 end
 
 case node['drupal-solr']['drupal_version']

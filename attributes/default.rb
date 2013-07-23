@@ -12,7 +12,8 @@ default['drupal-solr']['url']       = "http://archive.apache.org/dist/lucene/sol
                                        node['drupal-solr']['version'] + "/apache-solr-" +
                                        node['drupal-solr']['version']+ ".tgz"
 
-default['drupal-solr']['app_name']  = "org"
+default['drupal-solr']['app_name']  = "solr"
+default['drupal-solr']['war_dir']   = "/opt/solr"
 default['drupal-solr']['home_dir']  = "/opt/solr/#{node['drupal-solr']['app_name']}"
 default['drupal-solr']['make_solr_default_search'] = true
 
@@ -21,15 +22,16 @@ default['drupal-solr']['php_client_url'] =
 
 default['drupal-solr']['apachesolr_install_dir'] = "#{node['drupal-solr']['drupal_root']}/sites/all/modules/apachesolr"
 
-# directory in apachesolr module where relevant solr
-# configuration files can be found to copy to solr/home
 case node['drupal-solr']['drupal_version']
 when '7'
   case node['drupal-solr']['version'].split(".")[0]
   when '1'
-    default['drupal-solr']['apachesolr_conf_dir'] = node['drupal-solr']['apachesolr_install_dir'] + "/solr-conf/solr-1.4"
+    default['drupal-solr']['conf_source'] =
+      node['drupal-solr']['apachesolr_install_dir'] + "/solr-conf/solr-1.4"
   else 
-    default['drupal-solr']['apachesolr_conf_dir'] = node['drupal-solr']['apachesolr_install_dir'] + "/solr-conf/solr-" + node['drupal-solr']['version'].split(".")[0]+".x"
+    default['drupal-solr']['conf_source'] = 
+      node['drupal-solr']['apachesolr_install_dir'] + 
+      "/solr-conf/solr-" + node['drupal-solr']['version'].split(".")[0]+".x"
   end
 when '6'
   default['drupal-solr']['apachesolr_conf_dir'] =

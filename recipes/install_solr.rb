@@ -5,14 +5,17 @@
 include_recipe "tomcat"
 include_recipe "curl"
 
-SOLR_CONTEXT_FILE       = node['tomcat']['context_dir'] + "/" +
-                          node['drupal-solr']['app_name'] + ".xml"
+solr_archive = "apache-solr-" + node['drupal-solr']['version']
 
-SOLR_ARCHIVE            = "apache-solr-" + node['drupal-solr']['version']
-
-
-# solr/home directory
-directory node['drupal-solr']['home_dir'] do
+# solr home directory
+directory "#{node['drupal-solr']['home_dir']}/conf" do
+  owner node['tomcat']['user']
+  group node['tomcat']['group']
+  mode 0775
+  recursive true
+end
+#solr.war directory
+directory node['drupal-solr']['war_dir'] do
   owner node['tomcat']['user']
   group node['tomcat']['group']
   mode 0775
@@ -20,18 +23,19 @@ directory node['drupal-solr']['home_dir'] do
 end
 
 bash "download-solr-#{node['drupal-solr']['version']}" do
-  cwd "#{node['drupal-solr']['home_dir']}/.."
+  cwd node['drupal-solr']['war_dir']
   code <<-EOH
     curl #{node['drupal-solr']['url']} | tar xz
-    cp #{SOLR_ARCHIVE}/example/webapps/solr.war .
-    cp -Rf #{SOLR_ARCHIVE}/example/solr/. #{node['drupal-solr']['home_dir']}/
-    chown -R #{node['tomcat']['user']}:#{node['tomcat']['group']} #{node['drupal-solr']['home_dir']} 
+    cp #{solr_archive}/example/webapps/solr.war .
   EOH
-  creates node['drupal-solr']['home_dir'] + "/conf/schema.xml"
+  creates node['drupal-solr']['war_dir'] + "/solr.war"
   notifies :restart, "service[tomcat]", :delayed
 end
 
-template SOLR_CONTEXT_FILE do
+solr_context_file = node['tomcat']['context_dir'] + "/" +
+                    node['drupal-solr']['app_name'] + ".xml"
+
+template solr_context_file do
   owner node['tomcat']['user']
   group node['tomcat']['group']
   mode 0644

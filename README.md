@@ -48,7 +48,9 @@ below can be accessed in the cookbook via
 |   Attribute Name    |Default |           Description           |
 | --------------------|:------:|:------------------------------: |
 |`version`   | `1.4.0` | Apache Solr version to be installed
-|`app_name`  | `org` | name of the Solr Tomcat web application
+|`app_name`  | `solr` | name of the Solr Tomcat web application
+|`war_dir`  | `/opt/solr` | absolute path to the directory containing Solr `Docroot` (`solr.war` will be placed here)
+|`conf_source` | config files directory provided by the `apachesolr` module | absolute path to the directory from where solr config files (`protwords.txt`,`solrconfig.xml`, and `schema.xml` are copied to solr home
 |`drupal_root` | '' | absolute path to the existing Drupal site
 |`drupal_db` | '' | name of MySQL database that Drupal is using
 |`mysql_root_pass`| '' | password for root access to the MySQL server Drupal is using
