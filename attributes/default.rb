@@ -35,3 +35,5 @@ when '6'
   default['drupal-solr']['apachesolr_conf_dir'] =
   node['drupal-solr']['apachesolr_install_dir']
 end
+
+default['drupal-solr']['mysql_root_password'] = 'root'

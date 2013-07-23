@@ -10,7 +10,7 @@ DRUSH                   = "drush --root='#{node['drupal-solr']['drupal_root']}'"
 DB_ROOT_CONNECTION      = [ "mysql",
                             "--user='root'",
                             "--host='localhost'",
-                            "--password='#{node['mysql']['server_root_password']}'",
+                            "--password='#{node['drupal-solr']['mysql_root_password']}'",
                             "--database='#{node['drupal-solr']['drupal_db']}'"
                           ].join(' ')
 
