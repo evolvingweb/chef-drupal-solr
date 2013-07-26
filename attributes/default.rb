@@ -1,41 +1,38 @@
 ## Cookbook Name:: drupal-solr
-## Attribute:: solr
+## Attribute:: default
 
 # must be one of the versions available at http://archive.apache.org/dist/lucene/solr/
 # must be consistent with node['drupal-solr']['apachesolr_conf_dir']
 
 default['drupal-solr']['drupal_root'] = ''
-default['drupal-solr']['drupal_db'] = ''
-default['drupal-solr']['drupal_version'] = '7'
-default['drupal-solr']['version']   = '1.4.0'
+default['drupal-solr']['module_version'] = "7.x-1.3"
+default['drupal-solr']['solr_version']   = '3.5.0'
 default['drupal-solr']['url']       = "http://archive.apache.org/dist/lucene/solr/" +
-                                       node['drupal-solr']['version'] + "/apache-solr-" +
-                                       node['drupal-solr']['version']+ ".tgz"
-
+                                       node['drupal-solr']['solr_version'] + "/apache-solr-" +
+                                       node['drupal-solr']['solr_version']+ ".tgz"
 default['drupal-solr']['app_name']  = "solr"
 default['drupal-solr']['war_dir']   = "/opt/solr"
 default['drupal-solr']['home_dir']  = "/opt/solr/#{node['drupal-solr']['app_name']}"
 default['drupal-solr']['make_solr_default_search'] = true
 
-default['drupal-solr']['php_client_url'] =
-  "https://solr-php-client.googlecode.com/files/SolrPhpClient.r22.2009-11-09.tgz"
-
-default['drupal-solr']['apachesolr_install_dir'] = "#{node['drupal-solr']['drupal_root']}/sites/all/modules/apachesolr"
-
-case node['drupal-solr']['drupal_version']
-when '7'
-  case node['drupal-solr']['version'].split(".")[0]
-  when '1'
-    default['drupal-solr']['conf_source'] =
-      node['drupal-solr']['apachesolr_install_dir'] + "/solr-conf/solr-1.4"
-  else 
-    default['drupal-solr']['conf_source'] = 
-      node['drupal-solr']['apachesolr_install_dir'] + 
-      "/solr-conf/solr-" + node['drupal-solr']['version'].split(".")[0]+".x"
+# Logic based on the following:
+#   http://drupalcode.org/project/apachesolr.git/blob/refs/heads/5.x-2.x:/schema.xml
+#   http://drupalcode.org/project/apachesolr.git/blob/refs/heads/6.x-1.x:/schema.xml
+#   http://drupalcode.org/project/apachesolr.git/blob/refs/heads/6.x-2.x:/schema.xml
+#   http://drupalcode.org/project/apachesolr.git/tree/refs/heads/6.x-3.x:/solr-conf
+#   http://drupalcode.org/project/apachesolr.git/tree/refs/heads/7.x-1.x:/solr-conf
+def getSolrConfPath(drupalVersion, solrVersion)
+  if drupalVersion.match /^6.x-3|^7|^8/  # newer versions
+    path = case solrVersion
+      when /1\.4/ then '/solr-conf/solr-1.4'
+      when /3\./ then '/solr-conf/solr-3.x'
+      when /4\./ then '/solr-conf/solr-4.x'
+      else raise "Unsupported solr version"
+    end
+  else # older versions
+    path = ''
   end
-when '6'
-  default['drupal-solr']['apachesolr_conf_dir'] =
-  node['drupal-solr']['apachesolr_install_dir']
+  return path
 end
 
-default['drupal-solr']['mysql_root_password'] = 'root'
+default['drupal-solr']['conf_source'] = getSolrConfPath(node['drupal-solr']['module_version'], node['drupal-solr']['solr_version'])

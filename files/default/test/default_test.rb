@@ -29,13 +29,13 @@ class TestSolr < MiniTest::Chef::TestCase
   end
   def test_drupal_solr_module
     # only for Drupal 7
-    if node['drupal-solr']['drupal_version'] =~ /^7/ 
+    if node['drupal-solr']['module_version'].match /^6.x-3|^7|8/
       command = "drush --root=#{node['drupal-solr']['drupal_root']} variable-get search_active_modules | grep apachesolr"
     else
       command = "exit 0"
     end
     txt = "expected to find apachesolr in active Drupal search modules"
-    assert_sh command , txt
+    assert_sh command, txt
   end
   def test_solr_is_default_search
     if node['drupal-solr']['make_solr_default_search']
@@ -49,7 +49,6 @@ class TestSolr < MiniTest::Chef::TestCase
     # number of automatically generated nodes for testing
     n = 2
     # assemble all necessary paths and urls
-    mysql_root        = "mysql -u root -p#{node['drupal-solr']['mysql_root_pass']} " +
                         "--database=#{node['drupal-solr']['drupal_db']}"
     solr_root_url     = "http://localhost:#{node['tomcat']['port']}/" +
                         node['drupal-solr']['app_name']
@@ -89,7 +88,7 @@ class TestSolr < MiniTest::Chef::TestCase
     
     # record the number of indexed documents in solr after new content generation
     system "echo `#{find_num_docs}` > #{minitest_log_dir}/after"
-    database_cleanup  = "#{mysql_root} -e \"\
+    database_cleanup  = "#{drush} sql-query \"\
                         DELETE FROM node WHERE \
                         created >= #{before_time} AND\
                         created < #{after_time}\""
