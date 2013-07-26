@@ -5,16 +5,13 @@
 include_recipe "tomcat"
 include_recipe "curl"
 
-solr_archive = "apache-solr-" + node['drupal-solr']['version']
-
-# solr home directory
-directory "#{node['drupal-solr']['home_dir']}/conf" do
+directory "#{node['drupal-solr']['home_dir']}" do
   owner node['tomcat']['user']
   group node['tomcat']['group']
   mode 0775
   recursive true
 end
-#solr.war directory
+
 directory node['drupal-solr']['war_dir'] do
   owner node['tomcat']['user']
   group node['tomcat']['group']
@@ -22,20 +19,36 @@ directory node['drupal-solr']['war_dir'] do
   recursive true
 end
 
-bash "download-solr-#{node['drupal-solr']['version']}" do
-  cwd node['drupal-solr']['war_dir']
-  code <<-EOH
-    curl #{node['drupal-solr']['url']} | tar xz
-    cp #{solr_archive}/example/webapps/solr.war .
-  EOH
-  creates node['drupal-solr']['war_dir'] + "/solr.war"
-  notifies :restart, "service[tomcat]", :delayed
+src_filepath = "#{Chef::Config['file_cache_path']}/apache-solr-#{node['drupal-solr']['solr_version']}.tgz"
+
+remote_file "download-solr" do
+  source node['drupal-solr']['url']
+  path src_filepath
+  action :create_if_missing
 end
 
-solr_context_file = node['tomcat']['context_dir'] + "/" +
-                    node['drupal-solr']['app_name'] + ".xml"
+bash 'install-solr-war' do
+  cwd node['drupal-solr']['war_dir']
+  code <<-EOH
+    tar xzf #{src_filepath}
+    cp apache-solr-#{node['drupal-solr']['solr_version']}/example/webapps/solr.war .
+  EOH
+  creates node['drupal-solr']['war_dir'] + "/solr.war"
+  notifies :restart, "service[tomcat]"
+end
 
-template solr_context_file do
+execute "install-example-solr-home" do
+  cwd node['drupal-solr']['war_dir']
+  command <<-EOH
+    ls #{node['drupal-solr']['home_dir']}
+    cp -Rf apache-solr-#{node['drupal-solr']['solr_version']}/example/solr/. #{node['drupal-solr']['home_dir']}/
+  EOH
+  creates node['drupal-solr']['home_dir'] + "/conf"
+  notifies :restart, "service[tomcat]"
+end
+
+template 'solr-context-file' do
+  path "#{node['tomcat']['context_dir']}/#{node['drupal-solr']['app_name']}.xml"
   owner node['tomcat']['user']
   group node['tomcat']['group']
   mode 0644
