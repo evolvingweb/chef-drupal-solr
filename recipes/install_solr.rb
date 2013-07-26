@@ -5,7 +5,7 @@
 include_recipe "tomcat"
 include_recipe "curl"
 
-directory "#{node['drupal-solr']['home_dir']}" do
+directory node['drupal-solr']['home_dir'] do
   owner node['tomcat']['user']
   group node['tomcat']['group']
   mode 0775
