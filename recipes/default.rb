@@ -45,17 +45,8 @@ execute "install-drupalized-solr-conf" do
   EOT
   action :nothing
   subscribes :run, "execute[install-example-solr-home]", :delayed # being explicit since it'll fail if immediately
-  notifies :run, "execute[fix-perms-solr-home]"
+  notifies :run, "execute[fix-perms-solr-home]", :immediately
   notifies :restart, "service[tomcat]", :immediately # immediately - otherwise tomcat will restart too soon; chef bug?
-end
-
-execute "fix-perms-solr-home" do
-  cwd node['drupal-solr']['home_dir']
-  command <<-EOT
-    chown -R #{node['tomcat']['user']} .
-    chmod -R u+rwx .
-  EOT
-  action :nothing
 end
 
 execute "set-d7-solr-url" do
