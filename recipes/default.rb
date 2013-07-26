@@ -51,7 +51,10 @@ end
 
 execute "fix-perms-solr-home" do
   cwd node['drupal-solr']['home_dir']
-  command "chown -R #{node['tomcat']['user']}:#{node['tomcat']['group']} ."
+  command <<-EOT
+    chown -R #{node['tomcat']['user']} .
+    chmod -R u+rwx .
+  EOT
   action :nothing
 end
 
