@@ -47,6 +47,15 @@ execute "install-example-solr-home" do
   notifies :restart, "service[tomcat]"
 end
 
+execute "fix-perms-solr-home" do
+  cwd node['drupal-solr']['home_dir']
+  command <<-EOT
+    chown -R #{node['tomcat']['user']} .
+    chmod -R u+rwx .
+  EOT
+  action :nothing
+end
+
 template 'solr-context-file' do
   path "#{node['tomcat']['context_dir']}/#{node['drupal-solr']['app_name']}.xml"
   owner node['tomcat']['user']
