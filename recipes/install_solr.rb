@@ -37,9 +37,10 @@ bash 'install-solr-war' do
   notifies :restart, "service[tomcat]"
 end
 
-bash "install-example-solr-home" do
+execute "install-example-solr-home" do
   cwd node['drupal-solr']['war_dir']
-  code <<-EOH
+  command <<-EOH
+    ls #{node['drupal-solr']['home_dir']}
     cp -Rf apache-solr-#{node['drupal-solr']['solr_version']}/example/solr/. #{node['drupal-solr']['home_dir']}/
   EOH
   creates node['drupal-solr']['home_dir'] + "/conf"

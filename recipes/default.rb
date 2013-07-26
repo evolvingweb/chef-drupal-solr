@@ -8,7 +8,7 @@ include_recipe "drush"
 DRUSH = "drush --root='#{node['drupal-solr']['drupal_root']}'"
 
 bash "download-apachesolr-module" do
-  code "#{DRUSH} pm-download -y apachesolr-#{node['drupal-solr']['module_version']}"
+  code "#{DRUSH} pm-download apachesolr-#{node['drupal-solr']['module_version']}"
   not_if "#{DRUSH} pm-list | grep apachesolr"
 end
 
@@ -39,11 +39,12 @@ end
 
 execute "install-drupalized-solr-conf" do
   command <<-EOT
-    cd $(#{solr_module_path_cmd})/#{node['drupal-solr']['conf_source']}
-    cp protwords.txt schema.xml solrconfig.xml #{node['drupal-solr']['home_dir']}/conf
+    cd $(#{solr_module_path_cmd})
+    echo $PWD
+    cp #{node['drupal-solr']['conf_source_glob']} #{node['drupal-solr']['home_dir']}/conf/
   EOT
   action :nothing
-  subscribes :run, "bash[install-example-solr-home]", :delayed
+  subscribes :run, "execute[install-example-solr-home]", :delayed # being explicit since it'll fail if immediately
   notifies :run, "execute[fix-perms-solr-home]"
   notifies :restart, "service[tomcat]", :immediately # immediately - otherwise tomcat will restart too soon; chef bug?
 end

@@ -24,15 +24,15 @@ default['drupal-solr']['make_solr_default_search'] = true
 def getSolrConfPath(drupalVersion, solrVersion)
   if drupalVersion.match /^6.x-3|^7|^8/  # newer versions
     path = case solrVersion
-      when /1\.4/ then '/solr-conf/solr-1.4'
-      when /3\./ then '/solr-conf/solr-3.x'
-      when /4\./ then '/solr-conf/solr-4.x'
+      when /1\.4/ then '/solr-conf/solr-1.4/*'
+      when /3\./ then '/solr-conf/solr-3.x/*'
+      when /4\./ then '/solr-conf/solr-4.x/*'
       else raise "Unsupported solr version"
     end
   else # older versions
-    path = ''
+    path = './{protwords.txt,schema.xml,solrconfig.xml}'
   end
   return path
 end
 
-default['drupal-solr']['conf_source'] = getSolrConfPath(node['drupal-solr']['module_version'], node['drupal-solr']['solr_version'])
+default['drupal-solr']['conf_source_glob'] = getSolrConfPath(node['drupal-solr']['module_version'], node['drupal-solr']['solr_version'])
