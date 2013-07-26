@@ -86,3 +86,8 @@
   (overwrite existing files).
 - now enable the module `drush en apachesolr`, and configure the module to talk
   to the right solr server (in my case `localhost:8080/org`).
+
+## Chef gotchas
+- `cp ./{schema.xml,solrconfig.xml,protwords.txt} OTHERDIR` fails inside a chef
+  `execute` resource, but succeeds in a `bash` resource in a `bash` resource.
+- `subscribes` is implemented by getting the target resource and adding notifies to it.

@@ -22,10 +22,10 @@ suites:
       "server_repl_password": "root"
     },
     "deploy-drupal": {
-      "drupal_dl_version" : "7"
+      "drupal_dl_version" : "drupal-7"
     },
     "drupal-solr" : {
-      "drupal_version" : "7"
+      "module_version" : "7.x-1.x"
     },
     "minitest" : { 
       "recipes" : ["deploy-drupal::default" , "drupal-solr::default"] ,
@@ -44,10 +44,10 @@ suites:
       "server_repl_password": "root"
     },
     "deploy-drupal": {
-      "drupal_dl_version" : "6"
+      "drupal_dl_version" : "drupal-6"
     },
     "drupal-solr" : {
-      "drupal_version" : "6"
+      "drupal_version" : "6.x-1.x"
     },
     "minitest" : { 
       "recipes" : ["deploy-drupal::default" , "drupal-solr::default"] ,
