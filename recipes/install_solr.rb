@@ -44,6 +44,7 @@ execute "install-example-solr-home" do
     cp -Rf apache-solr-#{node['drupal-solr']['solr_version']}/example/solr/. #{node['drupal-solr']['home_dir']}/
   EOH
   creates node['drupal-solr']['home_dir'] + "/conf"
+  notifies :run, "execute[fix-perms-solr-home]", :immediately
   notifies :restart, "service[tomcat]"
 end
 
