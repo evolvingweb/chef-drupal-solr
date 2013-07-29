@@ -72,11 +72,11 @@ class TestSolr < MiniTest::Chef::TestCase
             #{drush} pm-enable -y devel devel_generate;\
             #{drush} cache-clear all;"
     
-    # record number of indexed documents in solr
-    system "echo `#{find_num_docs}` > #{minitest_log_dir}/before"
-    
     # make sure all existing documents are indexed and commited to solr
     system "#{drush} solr-index; curl #{solr_commit_req}"
+    
+    # record number of indexed documents in solr
+    system "echo `#{find_num_docs}` > #{minitest_log_dir}/before"
     
     # generate content via drush, and record timestamps for cleanup
     before_time = Time.now.getutc.to_i
