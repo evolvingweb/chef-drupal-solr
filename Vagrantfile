@@ -44,11 +44,11 @@ Vagrant.configure("2") do |config|
       },
       "drupal-solr" => {
         "drupal_root" => "/var/shared/sites/cooked.drupal/site",
-        # "module_version" => "6.x-1.x",
+        #"module_version" => "6.x-2.x",
       },
       "deploy-drupal" => {
-        "dev_group_name" => "vagrant",
-        # "drupal_dl_version" => "drupal-6",
+        "dev_group" => "vagrant",
+        #"version" => "6"
       },
       "minitest" => {
         "recipes" => [ "drupal-solr::default" ],
