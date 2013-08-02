@@ -31,6 +31,7 @@ below can be accessed in the cookbook via
 |   Attribute Name    |Default |           Description           |
 | --------------------|:------:|:------------------------------: |
 |`solr_version`              | `3.5.0`                  | Apache Solr version to be installed. Use `1.4.0` with Drupal 6.
+|`log_format`              | `common`                  | Tomcat log format for the Solr webapp
 |`url`                       |                          | URL to download the stated `solr_version` from.
 |`app_name`                  | `solr`                   | name of the Solr Tomcat web application
 |`war_dir`                   | `/opt/solr`              | absolute path to the directory containing Solr `Docroot` (`solr.war` will be placed here)

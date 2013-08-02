@@ -3,6 +3,15 @@
   Local modifications will be overwritten by Chef
 -->
 <Context docBase="<%= node['drupal-solr']['war_dir'] %>/solr.war" debug="0" crossContext="true">
-  <Environment name="solr/home" type="java.lang.String" value="<%= node['drupal-solr']['home_dir']%>" override="true" />
-  <Valve className="org.apache.catalina.valves.AccessLogValve" prefix="solr_access_log_<%= node['drupal-solr']['app_name'] %>"/>
+  <Environment 
+    name="solr/home" 
+    type="java.lang.String" 
+    value="<%= node['drupal-solr']['home_dir']%>" 
+    override="true" />
+  <Valve
+    className="org.apache.catalina.valves.AccessLogValve"
+    prefix = "solr_<%= node['drupal-solr']['app_name'] %>_"
+    suffix = ".log"
+    pattern = "<%= node['drupal-solr']['log_format'] %>"
+  />
 </Context>
