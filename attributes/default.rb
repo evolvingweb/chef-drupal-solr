@@ -12,6 +12,7 @@ default['drupal-solr']['url']       = "http://archive.apache.org/dist/lucene/sol
                                        node['drupal-solr']['solr_version']+ ".tgz"
 default['drupal-solr']['app_name']  = "solr"
 default['drupal-solr']['log_format'] = "common"
+default['drupal-solr']['custom_conf_file'] = ''
 default['drupal-solr']['war_dir']   = "/opt/solr"
 default['drupal-solr']['home_dir']  = "/opt/solr/#{node['drupal-solr']['app_name']}"
 default['drupal-solr']['make_solr_default_search'] = true

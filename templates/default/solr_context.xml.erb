@@ -14,4 +14,6 @@
     suffix = ".log"
     pattern = "<%= node['drupal-solr']['log_format'] %>"
   />
+<!-- custom configuration loaded from <%= @custom_file %> by Chef -->
+<%= IO.read(@custom_file) if File.exists?(@custom_file) %>
 </Context>

@@ -62,6 +62,9 @@ template 'solr-context-file' do
   owner node['tomcat']['user']
   group node['tomcat']['group']
   mode 0644
+  variables({
+    :custom_file => node['drupal-solr']['custom_conf_file']
+  })
   source "solr_context.xml.erb"
   notifies :restart, "service[tomcat]"
 end
