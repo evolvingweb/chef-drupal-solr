@@ -37,8 +37,8 @@ bash "enable-apachesolr-module" do
   not_if "#{DRUSH} pm-list | grep apachesolr_search | grep Enabled"
 end
 
-execute "install-drupalized-solr-conf" do
-  command <<-EOT
+bash "install-drupalized-solr-conf" do
+  code <<-EOT
     cd $(#{solr_module_path_cmd})
     echo $PWD
     cp #{node['drupal-solr']['conf_source_glob']} #{node['drupal-solr']['home_dir']}/conf/
