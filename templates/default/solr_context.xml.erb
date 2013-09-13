@@ -18,7 +18,7 @@
   puposes behind port forwarding -->
   <Valve
     className="org.apache.catalina.valves.RemoteAddrValve"
-    allow="0\:0\:0\:0\:0\:0\:0\:1,127\.0\.0\.1"
+    allow="0:0:0:0:0:0:0:1,127\.0\.0\.1"
   />
 <!-- custom configuration loaded from <%= @custom_file %> by Chef -->
 <%= IO.read(@custom_file) if File.exists?(@custom_file) %>
