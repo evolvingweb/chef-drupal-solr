@@ -16,6 +16,7 @@ default['drupal-solr']['custom_conf_file'] = ''
 default['drupal-solr']['war_dir']   = "/opt/solr"
 default['drupal-solr']['home_dir']  = "/opt/solr/#{node['drupal-solr']['app_name']}"
 default['drupal-solr']['make_solr_default_search'] = true
+default['drupal-solr']['index_drupal_content'] = false
 
 # Logic based on the following:
 #   http://drupalcode.org/project/apachesolr.git/blob/refs/heads/5.x-2.x:/schema.xml

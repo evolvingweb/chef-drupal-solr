@@ -37,7 +37,7 @@ bash 'install-solr-war' do
   notifies :restart, "service[tomcat]"
 end
 
-execute "install-example-solr-home" do
+execute "install-solr-home" do
   cwd node['drupal-solr']['war_dir']
   command <<-EOH
     ls #{node['drupal-solr']['home_dir']}

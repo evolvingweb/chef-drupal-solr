@@ -39,3 +39,4 @@ below can be accessed in the cookbook via
 |`conf_source_glob`          | `solr-conf/solr-3.x/*`   | path to drupalized solr config files, relative to apachesolr module
 |`drupal_root`               | ''                       | absolute path to the existing Drupal site
 |`make_solr_default_search`  | `true`                   | sets Solr as the default search engine for Drupal
+|`index_drupal_content`      | `false`                  | after installation, sends the entire Drupal site content to Solr for indexing. This attribute will be only respected in the Chef run were Solr is installed. If Solr home directory is already populated, the cookbook will not re-index Drupal content.

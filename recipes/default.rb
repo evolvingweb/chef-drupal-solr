@@ -44,7 +44,7 @@ bash "install-drupalized-solr-conf" do
     cp #{node['drupal-solr']['conf_source_glob']} #{node['drupal-solr']['home_dir']}/conf/
   EOT
   action :nothing
-  subscribes :run, "execute[install-example-solr-home]", :delayed # being explicit since it'll fail if immediately
+  subscribes :run, "execute[install-solr-home]", :delayed # being explicit since it'll fail if immediately
   notifies :run, "execute[fix-perms-solr-home]", :immediately
   notifies :restart, "service[tomcat]", :immediately # immediately - otherwise tomcat will restart too soon; chef bug?
 end
@@ -65,4 +65,14 @@ end
 execute "set-solr-as-default-search" do
   command "#{DRUSH} vset search_default_module apachesolr_search"
   only_if { node['drupal-solr']['make_solr_default_search'] }
+end
+
+# If index_drupal_content attribute is false (default), content will never be indexed
+# If true, Drupal content will only be indexed after the first time Solr is
+# installed (solr-home is populated), and not on subsequent Chef runs
+execute "index-site-content" do
+  command "#{DRUSH} solr-reindex; echo 'Solr is indexing content ...'; #{DRUSH} solr-index 2>&1"
+  only_if { node['drupal-solr']['index_drupal_content'] }
+  subscribes :run, 'execute[install-solr-home]'
+  action :nothing
 end
