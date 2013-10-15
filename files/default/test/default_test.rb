@@ -49,7 +49,6 @@ class TestSolr < MiniTest::Chef::TestCase
     # number of automatically generated nodes for testing
     n = 2
     # assemble all necessary paths and urls
-                        "--database=#{node['drupal-solr']['drupal_db']}"
     solr_root_url     = "http://localhost:#{node['tomcat']['port']}/" +
                         node['drupal-solr']['app_name']
     # this section is a ",' and \ mine field, watch yourself:
