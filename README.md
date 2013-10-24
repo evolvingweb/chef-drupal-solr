@@ -1,6 +1,6 @@
 # Drupal-Solr Cookbook
 
-[![BuildStatus](https://secure.travis-ci.org/amirkdv/chef-drupal-solr.png)](http://travis-ci.org/amirkdv/chef-drupal-solr)
+[![Build Status](https://travis-ci.org/evolvingweb/chef-drupal-solr.png?branch=master)](https://travis-ci.org/evolvingweb/chef-drupal-solr)
 ## Description
 Installs and configures an [Apache Solr](http://wiki.apache.org/solr/)
 application served by Tomcat, and connects an existing Drupal site to Solr.
