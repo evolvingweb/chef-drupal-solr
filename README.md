@@ -9,7 +9,7 @@ application served by Tomcat, and connects an existing Drupal site to Solr.
 Chef >= 11.0.0
 
 ## Platforms
-Tested with Vagrant and precise64.box.
+Tested on Ubuntu 12.04 LTS, Drupal 6, 7, and Solr 1.4.
 
 ## Usage with Vagrant
 This repository includes an example `Vagrantfile` that spins up a virtual machine
