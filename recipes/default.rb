@@ -67,12 +67,13 @@ execute "set-solr-as-default-search" do
   only_if { node['drupal-solr']['make_solr_default_search'] }
 end
 
-# If index_drupal_content attribute is false (default), content will never be indexed
-# If true, Drupal content will only be indexed after the first time Solr is
-# installed (solr-home is populated), and not on subsequent Chef runs
+# If index_drupal_content attribute is false (default), Solr index
+# has to be manually indexed after installation.
+# If true, Drupal content will be indexed after every Chef run.
 execute "index-site-content" do
-  command "#{DRUSH} solr-reindex; echo 'Solr is indexing content ...'; #{DRUSH} solr-index 2>&1"
+  command "#{DRUSH} solr-reindex && echo 'Solr is indexing content ...' && #{DRUSH} solr-index 2>&1"
   only_if { node['drupal-solr']['index_drupal_content'] }
-  subscribes :run, 'execute[install-solr-home]'
   action :nothing
+  # nothing else in the cookbook can signal the proper timing for indexing data
+  subscribes :run, "service[tomcat]"
 end
